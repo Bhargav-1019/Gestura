@@ -71,7 +71,7 @@ def train():
        preds = torch.argmax(outputs, dim=1)
        acc = (preds == y_test).float().mean()
 
-    print(f"✅ Test Accuracy: {acc.item() * 100:.2f}%")
+    print(f" Test Accuracy: {acc.item() * 100:.2f}%")
 
 
     # Save Model
