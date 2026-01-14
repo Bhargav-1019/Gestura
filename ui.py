@@ -12,11 +12,11 @@ from gtts import gTTS
 from dotenv import load_dotenv
 import os
 
-#GEMINI SETUP
+# gemini 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 gemini_model = genai.GenerativeModel('gemini-1.5-flash')
 
-# SPEECH
+# speech
 def speak_text(text):
     try:
         engine = pyttsx3.init()
@@ -36,7 +36,7 @@ def process_and_speak(sentence):
     print("[Final]", hindi)
     speak_text(hindi)
 
-# MODEL SETUP 
+# model setup 
 FEATURE_DIM = 126
 SEQUENCE_LENGTH = 30
 
@@ -53,7 +53,7 @@ with open("data_seq1.pickle", "rb") as f:
 label_map = data_dict["label_map"]
 print("LABEL MAP:", label_map)
 
-# MEDIAPIPE
+# mediapipe
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(
     static_image_mode=False,
@@ -61,7 +61,6 @@ hands = mp_hands.Hands(
     min_detection_confidence=0.5
 )
 
-# BUFFERS
 sequence = deque(maxlen=SEQUENCE_LENGTH)
 predictions = deque(maxlen=15)
 
@@ -69,7 +68,7 @@ sentence = []
 collecting = False
 last_added_word = ""
 
-# CAMERA
+# camera
 cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
@@ -81,7 +80,7 @@ while cap.isOpened():
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(frame_rgb)
 
-    # LANDMARK EXTRACTION 
+    # landmark extraction
     landmarks = np.zeros(FEATURE_DIM, dtype=np.float32)
 
     if results.multi_hand_landmarks and results.multi_handedness:
@@ -96,7 +95,7 @@ while cap.isOpened():
                 landmarks[idx:idx+3] = [lm.x, lm.y, lm.z]
                 idx += 3
 
-    # normalize (SAME AS TRAINING)
+    # normalize
     norm = np.linalg.norm(landmarks)
     if norm > 0:
         landmarks /= norm
@@ -105,7 +104,7 @@ while cap.isOpened():
 
     label_to_display = "Detecting..."
 
-    # PREDICTION
+    # prediction
     if len(sequence) == SEQUENCE_LENGTH:
         x = torch.tensor(sequence, dtype=torch.float32).unsqueeze(0).to(device)
 
@@ -120,7 +119,7 @@ while cap.isOpened():
         else:
             label = "Detecting..."
 
-        # SMOOTHING
+        # smoothing
         if predictions:
             most_common, count = Counter(predictions).most_common(1)[0]
             label_to_display = most_common
@@ -132,7 +131,7 @@ while cap.isOpened():
                 predictions = deque(maxlen=15)
 
 
-    # DISPLAY
+    # display
     cv2.putText(frame, label_to_display, (20, 40),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
@@ -142,7 +141,7 @@ while cap.isOpened():
 
     cv2.imshow("Sign Language Recognition", frame)
 
-    # KEYS 
+    # keys
     key = cv2.waitKey(1) & 0xFF
 
     if key == ord('q'):
