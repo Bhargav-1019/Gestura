@@ -1,0 +1,23 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Model files
+*.pth
+
+# Dataset / generated files
+/data
+*.pickle
+
+collect_imgs.py
+
+# OS
+.DS_Store
+Thumbs.db
