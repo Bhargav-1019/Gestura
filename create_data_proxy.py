@@ -26,7 +26,7 @@ for label in label_names:
     img_dir = os.path.join(DATA_DIR, label)
     img_files = sorted(os.listdir(img_dir))
 
-    # 🔥 Split 900 images → multiple sequences
+    # Split 900 images → multiple sequences
     for i in range(0, len(img_files), SEQUENCE_LENGTH):
         sequence = []
         chunk = img_files[i:i + SEQUENCE_LENGTH]
